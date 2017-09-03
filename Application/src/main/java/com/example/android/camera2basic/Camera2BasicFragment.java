@@ -1149,7 +1149,7 @@ public class Camera2BasicFragment extends Fragment
                 //If it isn't recording, make it record and start up the blurry indicator
                 if (isRecording == false) {
                     isRecording = true;
-                    mBlurryIndicator.setImageResource(R.drawable.ic_camera_icon_red);
+                    mBlurryIndicator.setImageResource(R.drawable.ic_camera_icon_green);
 
                     mRecordButton.setImageResource(R.drawable.ic_recording);
                 }

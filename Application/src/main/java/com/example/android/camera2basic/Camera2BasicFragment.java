@@ -382,6 +382,8 @@ public class Camera2BasicFragment extends Fragment
             while (true){
                 if (isRecording) {
                     if (!mByteBufferMutex.isLocked()){
+                        //check if mutex is locked, if it isn't, means that no other thread is using
+                        //it and for the current thread to use the mutex
                         byte[] byteBuffer = null;
                         try {
                             if (mByteBufferMutex.tryLock(100, TimeUnit.MILLISECONDS)){
@@ -401,7 +403,7 @@ public class Camera2BasicFragment extends Fragment
 
                         boolean blurVar = isBlurry(byteBuffer);
 
-
+                        //Switch blurry indicators
                         if (blurVar && wasBlurry == false){
                             wasBlurry = true;
                             getActivity().runOnUiThread(new Runnable() {
@@ -431,6 +433,10 @@ public class Camera2BasicFragment extends Fragment
     });
 
     private Boolean isBlurry(byte[] bitmapBuffer){
+
+        /*
+        A method to determine if the prev. image was blurry or not.
+         */
 
         if (bitmapBuffer == null || bitmapBuffer.length == 0){
             return false;
@@ -1140,12 +1146,15 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.recordBtn: {
+                //If it isn't recording, make it record and start up the blurry indicator
                 if (isRecording == false) {
                     isRecording = true;
                     mBlurryIndicator.setImageResource(R.drawable.ic_camera_icon_red);
 
                     mRecordButton.setImageResource(R.drawable.ic_recording);
                 }
+                //If it is recording and the record button is pressed, it is no longer recording
+                //and blurry indicator should be greyed out
                 else {
                     isRecording = false;
                     mBlurryIndicator.setImageResource(R.drawable.ic_camera_icon_gray);
@@ -1155,6 +1164,7 @@ public class Camera2BasicFragment extends Fragment
 
                 break;
             }
+            //If the "Settings" button is pressed
             case R.id.info: {
                 Activity activity = getActivity();
 

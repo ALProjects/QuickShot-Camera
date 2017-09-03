@@ -12,7 +12,9 @@ import android.widget.Spinner;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/*
+SettingsActivity is everything in the "Settings" screen (i.e. the cog on the bottom right corner).
+ */
 public class SettingsActivity extends AppCompatActivity {
 
 
@@ -40,6 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         mSpinner.setAdapter(spinnerArrayAdapter);
         mSpinner.setSelection(spinnerVal);
 
+        //This is the listener for the frame rate spinner
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -55,6 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         ArrayList<String> resArrayList = new ArrayList<>();
 
+        // Setup for Resolution spinner
         for (int i = 0; i < Camera2BasicFragment.mResList.size(); i++){
             resArrayList.add(Camera2BasicFragment.mResList.get(i).toString());
         }

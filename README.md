@@ -1,90 +1,39 @@
+Summary
+-----
 
-Android Camera2Basic Sample
-===================================
+QuickShot Camera is a camera that takes consecutive photos continuously while also telling the user when the photos being captured start to become blurry (i.e. the camera moved too fast or the object being captured is out of focus) so that they can adjust their speed or distance accordingly. This is all done in real-time.
+This camera app is actually part of a bigger picture (no pun intended), where the user can further process the set of photos taken and reconstruct a 3D model using the aforementioned photos. 
+The main reasoning behind the 3D model is so that one can get visual image data on landmarks. While someone could slice up a video to achieve the same effect, it would not include and EXIF data to indicate the locations of where the discrete images were taken.
+To remedy this, a tool that could take burst images for a prolonged amount of time can provide image data and a constant stream of images for the user to use as modelling data afterwards. To ensure that the images used in the model are actually clear, the app has a visual indicator of blurriness to tell the user to slow down (or correct the distance) and give the camera a chance to focus on the subject. In order to check the blurriness, a Laplacian transform is applied on a grayscaled version of the image taken to detect the edges in the image.
+The more edges it has, the less "blurry" the photo is. If the number of edges is lower than the user defined threshold, the blurriness indicator will change colors and indicate to the user that they are going too fast and to slow down their movements. 
+Starter Code used: https://github.com/googlesamples/android-Camera2Basic
 
-This sample demonstrates how to use basic functionalities of Camera2
-API. You can learn how to iterate through characteristics of all the
-cameras attached to the device, display a camera preview, and take
-pictures.
+Key Features
+-----
+- A real-time blurriness indicator to tell the user when they are moving the camera too fast or if the image is otherwise out of focus 
+- Ability to capture and save a set of continuous photos tagged with metadata
+- Tolerance setting for user to determine how blurry is considered "blurry"
+- A resolution setting for users to determine the resolution of their photos
+- A frame rate selector for the user to set the frames-per-second frequency by which they capture the images
+- EXIF location data to assist with associating each image with their geolocation
 
-Introduction
-------------
+Future Steps
+-----
+- Add in blurriness index of photo taken in EXIF metadata for post-processing
+- Cosmetic changes
+- Create fallback mechanism to reduce framerate for underpowered hardware
 
-The [Camera2 API][1] provides an interface to individual camera
-devices connected to an Android device. It replaces the deprecated
-Camera class.
+Technical roadblocks
+-----
 
-Use [getCameraIdList][2] to get a list of all the available
-cameras. You can then use [getCameraCharacteristics][3] and find the
-best camera that suits your need (front/rear facing, resolution etc).
+**Solved**
+- Performance issue on Nexus 5x
+  - lag when capturing images consecutively on default resolution
 
-Create an instance of [CameraDevice.StateCallback][4] and open a
-camera. It is ready to start camera preview when the camera is opened.
+- Contention for memory buffer holding image data between capturing, saving and checking for blurriness
+  - separate threads were created for each of the above activities
+  - create critical sections with mutex guarding access to image data buffer
 
-This sample uses TextureView to show the camera preview. Create a
-[CameraCaptureSession][5] and set a repeating [CaptureRequest][6] to it.
-
-Still image capture takes several steps. First, you need to lock the
-focus of the camera by updating the CaptureRequest for the camera
-preview. Then, in a similar way, you need to run a precapture
-sequence. After that, it is ready to capture a picture. Create a new
-CaptureRequest and call [capture][7]. Don't forget to unlock the focus
-when you are done.
-
-[1]: https://developer.android.com/reference/android/hardware/camera2/package-summary.html
-[2]: https://developer.android.com/reference/android/hardware/camera2/CameraManager.html#getCameraIdList()
-[3]: https://developer.android.com/reference/android/hardware/camera2/CameraManager.html#getCameraCharacteristics(java.lang.String)
-[4]: https://developer.android.com/reference/android/hardware/camera2/CameraDevice.StateCallback.html
-[5]: https://developer.android.com/reference/android/hardware/camera2/CameraCaptureSession.html
-[6]: https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.html
-[7]: https://developer.android.com/reference/android/hardware/camera2/CameraCaptureSession.html#capture(android.hardware.camera2.CaptureRequest, android.hardware.camera2.CameraCaptureSession.CaptureCallback, android.os.Handler)
-
-Pre-requisites
---------------
-
-- Android SDK 25
-- Android Build Tools v25.0.3
-- Android Support Repository
-
-Screenshots
--------------
-
-<img src="screenshots/main.png" height="400" alt="Screenshot"/> 
-
-Getting Started
----------------
-
-This sample uses the Gradle build system. To build this project, use the
-"gradlew build" command or use "Import Project" in Android Studio.
-
-Support
--------
-
-- Google+ Community: https://plus.google.com/communities/105153134372062985968
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
-
-If you've found an error in this sample, please file an issue:
-https://github.com/googlesamples/android-Camera2Basic
-
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
-
-License
--------
-
-Copyright 2017 The Android Open Source Project, Inc.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements.  See the NOTICE file distributed with this work for
-additional information regarding copyright ownership.  The ASF licenses this
-file to you under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License.  You may obtain a copy of
-the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-License for the specific language governing permissions and limitations under
-the License.
+- Unsure of how to check for blurriness in a photo
+  - Assumed number of edges in image would be related related to blurriness
+  - Laplacian transformation was employed to determine variance of edges in an efficient manner
